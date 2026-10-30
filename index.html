@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f6f78">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Cap 20 novembre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+
+/* Layout: one narrow column, today's counter as the instrument, the 22-day ledger below */
+:root{
+  --bg:#f3f5f4; --card:#ffffff; --ink:#18231f; --muted:#5f6e68; --line:#d9e1dd;
+  --accent:#1f6f78; --accent-soft:#e1eff0; --ok:#2e7d4f; --warn:#b7791f; --over:#c0392b; --hijri:#2e7d4f;
+  --f-display:"Sora",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-num:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1513; --card:#17201d; --ink:#e6eeea; --muted:#93a39c; --line:#2a3632;
+  --accent:#5fb7c0; --accent-soft:#1c3336; --ok:#5cbf86; --warn:#e0a84a; --over:#ef6b5b; --hijri:#6fcf97; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1513; --card:#17201d; --ink:#e6eeea; --muted:#93a39c; --line:#2a3632;
+  --accent:#5fb7c0; --accent-soft:#1c3336; --ok:#5cbf86; --warn:#e0a84a; --over:#ef6b5b; --hijri:#6fcf97; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px}
+.wrap{max-width:460px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--f-display);font-size:1.35rem;margin:0;letter-spacing:-.01em}
+.left{font-size:.85rem;color:var(--muted)}
+.left b{font-family:var(--f-num);color:var(--ink)}
+.today{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.date{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.greg{font-weight:600;text-transform:capitalize}
+.hij{color:var(--hijri);font-size:.9rem}
+.meter{display:flex;align-items:center;gap:18px}
+.big{font-family:var(--f-num);font-size:4.2rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:1.4rem;color:var(--muted);font-weight:500}
+.status{font-size:.9rem;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);align-self:flex-start}
+.status.warn{color:var(--warn)} .status.over{color:var(--over)} .status.ok{color:var(--ok)}
+.bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.bar.over i{background:var(--over)}
+.actions{display:grid;grid-template-columns:1fr 3fr;gap:10px}
+button{font:inherit;border:0;border-radius:14px;cursor:pointer}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.plus{background:var(--accent);color:var(--card);font-family:var(--f-display);font-size:1.6rem;font-weight:700;padding:18px}
+.minus{background:var(--accent-soft);color:var(--accent);font-size:1.4rem;font-weight:600}
+.minus:disabled{opacity:.4;cursor:default}
+.times{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--f-num);font-size:.8rem;color:var(--muted)}
+.times span{border:1px solid var(--line);border-radius:6px;padding:2px 6px}
+h2{font-family:var(--f-display);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:6px 0 0}
+.ledger{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:9px 14px;border-top:1px solid var(--line);font-size:.88rem}
+.row:first-child{border-top:0}
+.row .d{display:flex;flex-direction:column;min-width:0}
+.row .d em{font-style:normal;color:var(--hijri);font-size:.75rem}
+.row .n{font-family:var(--f-num);font-variant-numeric:tabular-nums;text-align:right;min-width:4.5ch}
+.row .obj{color:var(--muted)}
+.row.cur{background:var(--accent-soft)}
+.row.future .n{color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dot.ok{background:var(--ok)} .dot.over{background:var(--over)}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 10px 10px;display:flex;flex-direction:column;gap:8px}
+.chart svg{width:100%;height:auto;display:block}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .ax{fill:var(--muted);font-family:var(--f-num);font-size:10px}
+.chart .obj{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:5 4}
+.chart .real{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round}
+.chart .area{fill:var(--accent);opacity:.12}
+.chart .pt-ok{fill:var(--ok);stroke:var(--card);stroke-width:2}
+.chart .pt-over{fill:var(--over);stroke:var(--card);stroke-width:2}
+.chart .tline{stroke:var(--accent);stroke-width:1;opacity:.5}
+.legend{display:flex;gap:16px;font-size:.78rem;color:var(--muted);padding-left:6px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:18px;height:0;border-top:2px dashed var(--muted)}
+.legend i.lg-real{border-top:2.5px solid var(--accent)}
+.note{font-size:.78rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.tools{display:flex;gap:10px;flex-wrap:wrap}
+.tools button,.tools label{font-size:.82rem;background:var(--accent-soft);color:var(--accent);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+.tools input{display:none}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Cap 20 novembre</h1>
+    <div class="left" id="left"></div>
+  </header>
+
+  <section class="today" aria-live="polite">
+    <div class="date"><span class="greg" id="greg"></span><span class="hij" id="hij"></span></div>
+    <div class="meter">
+      <div class="big" id="count">0<small> / 0</small></div>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="bar" id="bar"><i id="fill"></i></div>
+    <div class="actions">
+      <button class="minus" id="minus" aria-label="Retirer le dernier">−1</button>
+      <button class="plus" id="plus">+1</button>
+    </div>
+    <div class="times" id="times"></div>
+  </section>
+
+  <h2>Progression</h2>
+  <div class="chart">
+    <svg id="chart" viewBox="0 0 440 210" role="img" aria-label="Courbe de progression : objectif et réel par jour"></svg>
+    <div class="legend"><span><i class="lg-obj"></i>Objectif</span><span><i class="lg-real"></i>Réel</span></div>
+  </div>
+
+  <h2>Programme</h2>
+  <div class="ledger" id="ledger"></div>
+  <div class="tools"><button id="exp">Exporter</button><label for="imp">Importer<input type="file" id="imp" accept="application/json"></label></div>
+  <p class="note" id="note">Données enregistrées sur ce téléphone. Exporte de temps en temps pour garder une copie.</p>
+</div>
+
+<script>
+const START="2026-10-30", END="2026-11-20";
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+function goal(s){
+  if(s<START) return 20;
+  if(s>=END) return 0;
+  const q=19-Math.round((parse(s)-parse(START))/864e5);
+  return Math.max(1,q);
+}
+const days=[];for(let d=parse(START);iso(d)<=END;d.setDate(d.getDate()+1))days.push(iso(d));
+const fG=new Intl.DateTimeFormat("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+const fS=new Intl.DateTimeFormat("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+let fH; try{fH=new Intl.DateTimeFormat("fr-FR-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"})}catch(e){fH=null}
+const hij=(d,short)=>{if(!fH)return"";let t=fH.format(d).replace(/\s*AH$/,"").replace(/\s*ère.*$/,"");if(short)t=t.replace(/\s\d{4}.*$/,"");return t};
+
+let data={}; // date -> {count, times[]}
+function loadLocal(){try{data=JSON.parse(localStorage.getItem("cap20")||"{}")||{}}catch(e){data={}}}
+function saveLocal(){try{localStorage.setItem("cap20",JSON.stringify(data))}catch(e){}}
+async function persist(day){
+  saveLocal();
+}
+const today=()=>iso(new Date());
+
+function render(){
+  const t=today(), now=new Date(), g=goal(t), e=data[t]||{count:0,times:[]}, c=e.count;
+  document.getElementById("greg").textContent=fG.format(now);
+  document.getElementById("hij").textContent=hij(now);
+  document.getElementById("count").innerHTML=c+"<small> / "+g+"</small>";
+  const st=document.getElementById("status"), bar=document.getElementById("bar");
+  let cls="",txt;
+  if(t>=END){txt=c===0?"Jour sans : objectif 0":"Au-dessus de l'objectif";cls=c===0?"ok":"over"}
+  else if(c>g){txt="Dépassé de "+(c-g);cls="over"}
+  else if(c===g){txt="Objectif atteint, on s'arrête là";cls="warn"}
+  else{txt="Encore "+(g-c)+" possible"+(g-c>1?"s":"")+" aujourd'hui";cls="ok"}
+  st.textContent=txt; st.className="status "+cls;
+  bar.className="bar"+(c>g?" over":"");
+  document.getElementById("fill").style.width=(g?Math.min(100,c/g*100):(c?100:0))+"%";
+  document.getElementById("minus").disabled=c===0;
+  document.getElementById("times").innerHTML=(e.times||[]).map(x=>"<span>"+x+"</span>").join("");
+  const rem=Math.max(0,Math.round((parse(END)-parse(t))/864e5));
+  document.getElementById("left").innerHTML=rem>0?"Jour J dans <b>"+rem+"</b> j":"<b>Jour J</b> passé";
+  document.getElementById("ledger").innerHTML=days.map(s=>{
+    const d=parse(s), gg=goal(s), en=data[s], has=en&&s<=t, cnt=has?en.count:null;
+    const dot=s<t||(s===t&&has)?(cnt!=null&&cnt<=gg?"ok":(cnt!=null?"over":"")):"";
+    return `<div class="row${s===t?" cur":""}${s>t?" future":""}"><div class="d"><span>${fS.format(d)}${s===END?" · Jour J":""}</span><em>${hij(d,true)}</em></div><div class="n">${cnt!=null?cnt:"–"} <span class="obj">/ ${gg}</span></div><span class="dot ${dot}"></span></div>`;
+  }).join("");
+  drawChart(t);
+}
+function drawChart(t){
+  const W=440,H=210,L=30,R=12,T=12,B=26,n=days.length;
+  const x=i=>L+i*(W-L-R)/(n-1), y=v=>T+(1-Math.min(v,20)/20)*(H-T-B);
+  let s="";
+  for(const v of [0,5,10,15,20]) s+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L-6}" y="${y(v)+3.5}" text-anchor="end">${v}</text>`;
+  [0,7,14,21].forEach(i=>{const d=parse(days[i]);s+=`<text class="ax" x="${x(i)}" y="${H-8}" text-anchor="${i===0?"start":i===21?"end":"middle"}">${d.getDate()}/${d.getMonth()+1}</text>`});
+  const ti=days.indexOf(t);
+  if(ti>=0) s+=`<line class="tline" x1="${x(ti)}" x2="${x(ti)}" y1="${T}" y2="${H-B}"/>`;
+  s+=`<polyline class="obj" points="${days.map((d,i)=>x(i)+","+y(goal(d))).join(" ")}"/>`;
+  const pts=days.map((d,i)=>({i,d,c:data[d]&&d<=t?data[d].count:null})).filter(p=>p.c!=null);
+  if(pts.length){
+    if(pts.length>1) s+=`<path class="area" d="M${x(pts[0].i)},${y(0)} ${pts.map(p=>"L"+x(p.i)+","+y(p.c)).join(" ")} L${x(pts.at(-1).i)},${y(0)}Z"/>`;
+    s+=`<polyline class="real" points="${pts.map(p=>x(p.i)+","+y(p.c)).join(" ")}"/>`;
+    s+=pts.map(p=>`<circle class="${p.c<=goal(p.d)?"pt-ok":"pt-over"}" cx="${x(p.i)}" cy="${y(p.c)}" r="4"/>`).join("");
+  }
+  document.getElementById("chart").innerHTML=s;
+}
+function change(delta){
+  const t=today(), e=data[t]||{count:0,times:[]};
+  if(delta>0){e.count++;const n=new Date();e.times=[...(e.times||[]),pad(n.getHours())+":"+pad(n.getMinutes())]}
+  else if(e.count>0){e.count--;e.times=(e.times||[]).slice(0,-1)}
+  data[t]=e; render(); persist(t);
+}
+document.getElementById("plus").addEventListener("click",()=>change(1));
+document.getElementById("minus").addEventListener("click",()=>change(-1));
+loadLocal(); render();
+setInterval(render,60000);
+
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()});
+try{navigator.storage?.persist?.()}catch(e){}
+document.getElementById("exp").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(data,null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="cap20-"+today()+".json";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+document.getElementById("imp").addEventListener("change",async ev=>{
+  const f=ev.target.files[0];if(!f)return;
+  try{const o=JSON.parse(await f.text());if(o&&typeof o==="object"){for(const k in o){if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&typeof o[k].count==="number")data[k]=o[k]}saveLocal();render();document.getElementById("note").textContent="Données importées."}}
+  catch(e){document.getElementById("note").textContent="Fichier illisible : choisis un export Cap 20."}
+  ev.target.value="";
+});
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
+</script>
+</body>
+</html>
