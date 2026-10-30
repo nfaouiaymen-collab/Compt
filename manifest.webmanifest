@@ -1,6 +1,6 @@
 {
-  "name": "Cap 20",
-  "short_name": "Cap 20",
+  "name": "Compteur",
+  "short_name": "Compteur",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

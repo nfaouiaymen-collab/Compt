@@ -8,7 +8,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Cap 20 novembre</title>
+<title>Compteur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -91,7 +91,7 @@ h2{font-family:var(--f-display);font-size:.8rem;text-transform:uppercase;letter-
 
 <div class="wrap">
   <header>
-    <h1>Cap 20 novembre</h1>
+    <h1>Compteur</h1>
     <div class="left" id="left"></div>
   </header>
 
@@ -135,8 +135,9 @@ function goal(s){
 const days=[];for(let d=parse(START);iso(d)<=END;d.setDate(d.getDate()+1))days.push(iso(d));
 const fG=new Intl.DateTimeFormat("fr-FR",{weekday:"long",day:"numeric",month:"long"});
 const fS=new Intl.DateTimeFormat("fr-FR",{weekday:"short",day:"numeric",month:"short"});
-let fH; try{fH=new Intl.DateTimeFormat("fr-FR-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"})}catch(e){fH=null}
-const hij=(d,short)=>{if(!fH)return"";let t=fH.format(d).replace(/\s*AH$/,"").replace(/\s*ère.*$/,"");if(short)t=t.replace(/\s\d{4}.*$/,"");return t};
+const HM=["Mouharram","Safar","Rabia I","Rabia II","Joumada I","Joumada II","Rajab","Chaabane","Ramadan","Chawwal","Dhou al-Qi'da","Dhou al-Hijja"];
+let fH; try{fH=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn",{day:"numeric",month:"numeric",year:"numeric"})}catch(e){fH=null}
+const hij=(d,short)=>{if(!fH)return"";try{const p={};fH.formatToParts(d).forEach(x=>p[x.type]=x.value);const m=parseInt(p.month,10),dd=parseInt(p.day,10),y=parseInt(p.year||p.relatedYear,10);if(!(m>=1&&m<=12)||!dd)return"";return dd+" "+HM[m-1]+(short||!y?"":" "+y)}catch(e){return""}};
 
 let data={}; // date -> {count, times[]}
 function loadLocal(){try{data=JSON.parse(localStorage.getItem("cap20")||"{}")||{}}catch(e){data={}}}
@@ -203,13 +204,13 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()})
 try{navigator.storage?.persist?.()}catch(e){}
 document.getElementById("exp").addEventListener("click",()=>{
   const blob=new Blob([JSON.stringify(data,null,1)],{type:"application/json"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="cap20-"+today()+".json";
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="compteur-"+today()+".json";
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 });
 document.getElementById("imp").addEventListener("change",async ev=>{
   const f=ev.target.files[0];if(!f)return;
   try{const o=JSON.parse(await f.text());if(o&&typeof o==="object"){for(const k in o){if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&typeof o[k].count==="number")data[k]=o[k]}saveLocal();render();document.getElementById("note").textContent="Données importées."}}
-  catch(e){document.getElementById("note").textContent="Fichier illisible : choisis un export Cap 20."}
+  catch(e){document.getElementById("note").textContent="Fichier illisible : choisis un export Compteur."}
   ev.target.value="";
 });
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
